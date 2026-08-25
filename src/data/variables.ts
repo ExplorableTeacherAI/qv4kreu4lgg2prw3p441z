@@ -82,83 +82,139 @@ export interface VariableDefinition {
  */
 export const variableDefinitions: Record<string, VariableDefinition> = {
     // ========================================
-    // ADD YOUR VARIABLES HERE
+    // SECTION 2 — Every triangle adds up to the same thing
     // ========================================
+    triangleApexX: {
+        defaultValue: 246,
+        type: 'number',
+        label: 'Triangle apex x',
+        description: 'Horizontal position of the draggable apex of the triangle',
+        min: 70,
+        max: 430,
+        step: 1,
+        color: '#62D0AD',
+    },
+    triangleApexY: {
+        defaultValue: 92,
+        type: 'number',
+        label: 'Triangle apex y',
+        description: 'Vertical position of the draggable apex of the triangle',
+        min: 66,
+        max: 206,
+        step: 1,
+        color: '#62D0AD',
+    },
+    triangleHighlight: {
+        defaultValue: '',
+        type: 'text',
+        label: 'Triangle highlight',
+        description: 'Which part of the triangle figure is highlighted: corners | straight',
+        color: '#62D0AD',
+        bgColor: 'rgba(98, 208, 173, 0.22)',
+    },
+    answerTriangleMissingAngle: {
+        defaultValue: '',
+        type: 'text',
+        label: 'Missing angle answer',
+        description: 'Student answer for the missing angle in a triangle',
+        placeholder: '???',
+        correctAnswer: ['65', '65°'],
+        color: '#62D0AD',
+    },
 
-    // Uncomment and modify these examples for your lesson:
+    // ========================================
+    // SECTION 3 — Splitting a four-sided shape
+    // ========================================
+    quadVertices: {
+        defaultValue: [110, 82, 392, 62, 430, 226, 78, 244],
+        type: 'array',
+        label: 'Quadrilateral corners',
+        description: 'Flat list of the four corner positions as x1, y1, x2, y2, x3, y3, x4, y4',
+    },
+    quadDiagonal: {
+        defaultValue: '',
+        type: 'text',
+        label: 'Drawn diagonal',
+        description: 'Which diagonal the student has drawn: empty, 02 or 13',
+    },
+    quadAttempt: {
+        defaultValue: '',
+        type: 'text',
+        label: 'Diagonal attempt result',
+        description: 'Result of the last corner pair the student joined: empty, side or diagonal',
+    },
+    quadHighlight: {
+        defaultValue: '',
+        type: 'text',
+        label: 'Quadrilateral highlight',
+        description: 'Which part of the quadrilateral figure is highlighted: triangles | corners',
+        color: '#62D0AD',
+        bgColor: 'rgba(98, 208, 173, 0.22)',
+    },
+    answerQuadSum: {
+        defaultValue: '',
+        type: 'text',
+        label: 'Quadrilateral angle sum answer',
+        description: 'Student answer for the angle sum of any four sided shape',
+        placeholder: '???',
+        correctAnswer: ['360', '360°'],
+        color: '#62D0AD',
+    },
 
-    /*
-    // ─────────────────────────────────────────
-    // NUMBER - Use with sliders
-    // ─────────────────────────────────────────
-    myValue: {
+    // ========================================
+    // SECTION 4 — Counting the triangles inside any polygon
+    // ========================================
+    polygonSides: {
         defaultValue: 5,
         type: 'number',
-        label: 'My Value',
-        description: 'A number that controls something',
-        unit: 'm',           // optional unit display
-        min: 0,
+        label: 'Number of sides',
+        description: 'How many sides the polygon has, shared by the polygon and the graph',
+        min: 3,
         max: 10,
-        step: 0.5,
+        step: 1,
+        color: '#62D0AD',
     },
-
-    // ─────────────────────────────────────────
-    // TEXT - Free text input
-    // ─────────────────────────────────────────
-    lessonTitle: {
-        defaultValue: 'My Lesson',
-        type: 'text',
-        label: 'Lesson Title',
-        description: 'The title of your lesson',
-        placeholder: 'Enter a title...',
+    polygonFanVertex: {
+        defaultValue: 0,
+        type: 'number',
+        label: 'Fan corner',
+        description: 'Index of the corner the diagonals fan out from',
+        min: 0,
+        max: 9,
+        step: 1,
     },
-
-    // ─────────────────────────────────────────
-    // SELECT - Dropdown with options
-    // ─────────────────────────────────────────
-    difficulty: {
-        defaultValue: 'medium',
-        type: 'select',
-        label: 'Difficulty',
-        description: 'The difficulty level of the lesson',
-        options: ['easy', 'medium', 'hard', 'expert'],
-    },
-
-    // ─────────────────────────────────────────
-    // BOOLEAN - Toggle switch
-    // ─────────────────────────────────────────
-    showHints: {
-        defaultValue: true,
-        type: 'boolean',
-        label: 'Show Hints',
-        description: 'Toggle to show or hide hints',
-    },
-
-    // ─────────────────────────────────────────
-    // ARRAY - List of numbers
-    // ─────────────────────────────────────────
-    dataPoints: {
-        defaultValue: [1, 4, 9, 16, 25],
+    polygonRadii: {
+        defaultValue: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         type: 'array',
-        label: 'Data Points',
-        description: 'Y-values for plotting a graph',
+        label: 'Corner distances',
+        description: 'How far each corner sits from the centre, as a multiple of the base radius',
     },
-
-    // ─────────────────────────────────────────
-    // OBJECT - Complex structured data
-    // ─────────────────────────────────────────
-    graphSettings: {
-        defaultValue: { 
-            xMin: -10, 
-            xMax: 10, 
-            showGrid: true 
-        },
-        type: 'object',
-        label: 'Graph Settings',
-        description: 'Configuration for the graph display',
-        schema: '{ xMin: number, xMax: number, showGrid: boolean }',
+    polygonHighlight: {
+        defaultValue: '',
+        type: 'text',
+        label: 'Polygon highlight',
+        description: 'Which quantity is highlighted across both polygon views: triangles | total',
+        color: '#62D0AD',
+        bgColor: 'rgba(98, 208, 173, 0.22)',
     },
-    */
+    answerPolygonTriangles: {
+        defaultValue: '',
+        type: 'text',
+        label: 'Stop sign triangle count',
+        description: 'Student answer for how many triangles an eight sided shape splits into',
+        placeholder: '???',
+        correctAnswer: ['6', 'six'],
+        color: '#62D0AD',
+    },
+    answerPolygonSum: {
+        defaultValue: '',
+        type: 'text',
+        label: 'Stop sign angle sum',
+        description: 'Student answer for the angle sum of an eight sided shape',
+        placeholder: '???',
+        correctAnswer: ['1080', '1080°'],
+        color: '#62D0AD',
+    },
 };
 
 /**
