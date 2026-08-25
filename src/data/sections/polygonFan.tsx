@@ -330,29 +330,29 @@ function PolygonSumGraphDrawing() {
                 <text x="24" y="30" fill={INK} opacity={opacity("__structure")}>
                     {formatSides(count)}
                 </text>
-                <text
-                    x={VIEW_WIDTH - 24}
-                    y="30"
-                    fill={ACCENT}
-                    textAnchor="end"
-                    opacity={opacity("total")}
-                >
-                    {formatSum(angleSum(count))}
-                </text>
             </g>
 
-            {/* Axes and labels — all anchored back inside the safe band. */}
+            {/* Axes and the one line the dots sit on. */}
             <g opacity={opacity("__structure")} style={EASE_150}>
-                <text x={PLOT_LEFT - 30} y={PLOT_TOP - 16} fill={INK} fontSize="11" textAnchor="start">
-                    angles add to
-                </text>
                 <line x1={PLOT_LEFT} y1={PLOT_TOP} x2={PLOT_LEFT} y2={PLOT_BOTTOM} stroke={INK_QUIET} strokeWidth="1.5" />
                 <line x1={PLOT_LEFT} y1={PLOT_BOTTOM} x2={PLOT_RIGHT} y2={PLOT_BOTTOM} stroke={INK_QUIET} strokeWidth="1.5" />
-                <g fill={INK} fontSize="11" textAnchor="end" style={{ fontVariantNumeric: "tabular-nums" }}>
-                    <text x={PLOT_LEFT - 10} y={yFor(0) + 4}>0°</text>
-                    <text x={PLOT_LEFT - 10} y={yFor(720) + 4}>720°</text>
-                    <text x={PLOT_LEFT - 10} y={yFor(1440) + 4}>1440°</text>
-                </g>
+                <line
+                    x1={xFor(MIN_SIDES)}
+                    y1={yFor(angleSum(MIN_SIDES))}
+                    x2={xFor(MAX_SIDES)}
+                    y2={yFor(angleSum(MAX_SIDES))}
+                    stroke={INK_QUIET}
+                    strokeWidth="1.5"
+                />
+                {allSides.map((value) => (
+                    <circle
+                        key={`dot-${value}`}
+                        cx={xFor(value)}
+                        cy={yFor(angleSum(value))}
+                        r="3.5"
+                        fill={INK_STRUCTURE}
+                    />
+                ))}
                 <g fill={INK} fontSize="11" style={{ fontVariantNumeric: "tabular-nums" }}>
                     {allSides.map((value) => (
                         <text
@@ -364,72 +364,58 @@ function PolygonSumGraphDrawing() {
                             {value}
                         </text>
                     ))}
-                    <text x={(PLOT_LEFT + PLOT_RIGHT) / 2} y={PLOT_BOTTOM + 40} textAnchor="middle" fontSize="11">
+                    <text x={(PLOT_LEFT + PLOT_RIGHT) / 2} y={PLOT_BOTTOM + 40} textAnchor="middle">
                         number of sides
                     </text>
                 </g>
             </g>
 
-            {/* Each extra side is one more triangle: a step of 180°. */}
-            <g {...hoverProps("triangles")} opacity={opacity("triangles")} style={EASE_150}>
-                {allSides.slice(1).map((value) => (
-                    <g key={`step-${value}`}>
-                        <Halo active={isActive("triangles")}>
-                            <line
-                                x1={xFor(value)}
-                                y1={yFor(angleSum(value - 1))}
-                                x2={xFor(value)}
-                                y2={yFor(angleSum(value))}
-                                stroke={ACCENT}
-                                strokeWidth={weight("triangles", 2.5) + 6}
-                                strokeLinecap="round"
-                            />
-                        </Halo>
+            {/* The one step that got us here: one more side, one more triangle. */}
+            {count > MIN_SIDES && (
+                <g {...hoverProps("triangles")} opacity={opacity("triangles")} style={EASE_150}>
+                    <line
+                        x1={xFor(count - 1)}
+                        y1={yFor(angleSum(count - 1))}
+                        x2={markerX}
+                        y2={yFor(angleSum(count - 1))}
+                        stroke={ACCENT}
+                        strokeWidth="1.5"
+                        strokeDasharray="3 4"
+                    />
+                    <Halo active={isActive("triangles")}>
                         <line
-                            x1={xFor(value - 1)}
-                            y1={yFor(angleSum(value - 1))}
-                            x2={xFor(value)}
-                            y2={yFor(angleSum(value - 1))}
-                            stroke={INK_QUIET}
-                            strokeWidth="1.5"
-                            strokeDasharray="3 4"
-                        />
-                        <line
-                            x1={xFor(value)}
-                            y1={yFor(angleSum(value - 1))}
-                            x2={xFor(value)}
-                            y2={yFor(angleSum(value))}
+                            x1={markerX}
+                            y1={yFor(angleSum(count - 1))}
+                            x2={markerX}
+                            y2={markerY}
                             stroke={ACCENT}
-                            strokeWidth={weight("triangles", 2.5)}
+                            strokeWidth={weight("triangles", 2.5) + 6}
                             strokeLinecap="round"
                         />
-                    </g>
-                ))}
-                <text
-                    x={xFor(MIN_SIDES + 1) + 8}
-                    y={yFor(angleSum(MIN_SIDES) + 90)}
-                    fill={ACCENT}
-                    fontSize="11"
-                    style={{ fontVariantNumeric: "tabular-nums" }}
-                >
-                    +180°
-                </text>
-            </g>
-
-            {/* The dots: one per possible shape. */}
-            <g opacity={opacity("__structure")} style={EASE_150}>
-                {allSides.map((value) => (
-                    <circle
-                        key={`dot-${value}`}
-                        cx={xFor(value)}
-                        cy={yFor(angleSum(value))}
-                        r="3.5"
-                        fill={INK_STRUCTURE}
+                    </Halo>
+                    <line
+                        x1={markerX}
+                        y1={yFor(angleSum(count - 1))}
+                        x2={markerX}
+                        y2={markerY}
+                        stroke={ACCENT}
+                        strokeWidth={weight("triangles", 2.5)}
+                        strokeLinecap="round"
                     />
-                ))}
-            </g>
+                    <text
+                        x={markerX - 8}
+                        y={(markerY + yFor(angleSum(count - 1))) / 2 + 4}
+                        fill={ACCENT}
+                        fontSize="11"
+                        textAnchor="end"
+                        style={{ fontVariantNumeric: "tabular-nums" }}
+                    >
+                        +180°
+                    </text>
+                </g>
+            )}
 
-            {/* The shared total, read off the axis. */}
+            {/* The shared total, read straight off the axis. */}
             <g {...hoverProps("total")} opacity={opacity("total")} style={EASE_150}>
                 <Halo active={isActive("total")}>
                     <line
@@ -451,6 +437,16 @@ function PolygonSumGraphDrawing() {
                     strokeWidth={weight("total", 2)}
                     strokeDasharray="4 5"
                 />
+                <text
+                    x={PLOT_LEFT - 10}
+                    y={markerY + 4}
+                    fill={ACCENT}
+                    fontSize="12"
+                    textAnchor="end"
+                    style={{ fontVariantNumeric: "tabular-nums" }}
+                >
+                    {formatSum(angleSum(count))}
+                </text>
             </g>
 
             {/* Draggable marker — the shared number of sides. */}
