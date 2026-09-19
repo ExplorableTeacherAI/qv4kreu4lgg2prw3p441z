@@ -82,6 +82,24 @@ export interface VariableDefinition {
  */
 export const variableDefinitions: Record<string, VariableDefinition> = {
     // ========================================
+    // LESSON-WIDE COLOURS — one quantity, one colour, in every section
+    // ========================================
+    triangleCount: {
+        defaultValue: 'triangles',
+        type: 'spotColor',
+        label: 'Number of triangles',
+        description: 'Colour for the triangles a shape is cut into, matching the teal triangles in the figures',
+        color: '#62D0AD',
+    },
+    angleSumTotal: {
+        defaultValue: 'angle sum',
+        type: 'spotColor',
+        label: 'Angle sum',
+        description: 'Colour for the total the angles add to, matching the amber totals in the figures',
+        color: '#F7B23B',
+    },
+
+    // ========================================
     // SECTION 2 — Every triangle adds up to the same thing
     // ========================================
     triangleApexX: {
@@ -120,6 +138,7 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         placeholder: '???',
         correctAnswer: ['65', '65°'],
         color: '#62D0AD',
+        bgColor: 'rgba(98, 208, 173, 0.18)',
     },
 
     // ========================================
@@ -158,7 +177,8 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         description: 'Student answer for the angle sum of any four sided shape',
         placeholder: '???',
         correctAnswer: ['360', '360°'],
-        color: '#62D0AD',
+        color: '#F7B23B',
+        bgColor: 'rgba(247, 178, 59, 0.18)',
     },
 
     // ========================================
@@ -172,7 +192,7 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         min: 3,
         max: 10,
         step: 1,
-        color: '#62D0AD',
+        color: '#F8A0CD',
     },
     polygonFanVertex: {
         defaultValue: 0,
@@ -205,6 +225,7 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         placeholder: '???',
         correctAnswer: ['6', 'six'],
         color: '#62D0AD',
+        bgColor: 'rgba(98, 208, 173, 0.18)',
     },
     answerPolygonSum: {
         defaultValue: '',
@@ -213,7 +234,8 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
         description: 'Student answer for the angle sum of an eight sided shape',
         placeholder: '???',
         correctAnswer: ['1080', '1080°'],
-        color: '#62D0AD',
+        color: '#F7B23B',
+        bgColor: 'rgba(247, 178, 59, 0.18)',
     },
 };
 

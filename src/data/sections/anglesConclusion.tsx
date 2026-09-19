@@ -6,7 +6,8 @@
 import { type ReactElement } from "react";
 import { StackLayout } from "@/components/layouts";
 import { Block } from "@/components/templates";
-import { EditableH2, EditableParagraph } from "@/components/atoms";
+import { EditableH2, EditableParagraph, InlineSpotColor } from "@/components/atoms";
+import { getVariableInfo, spotColorPropsFromDefinition } from "../variables";
 
 export const anglesConclusionBlocks: ReactElement[] = [
     <StackLayout key="layout-conclusion-heading" maxWidth="xl">
@@ -22,8 +23,31 @@ export const anglesConclusionBlocks: ReactElement[] = [
             <EditableParagraph id="para-conclusion-recap" blockId="conclusion-recap">
                 So the angle sum was never about how big a shape is or how stretched it
                 looks. Cut it into triangles from one corner, count them, multiply by
-                180. A ten-sided shape gives eight triangles and 1440 degrees, and you
-                never picked up a protractor.
+                180. A{" "}
+                <InlineSpotColor
+                    id="spot-conclusion-sides"
+                    varName="polygonSides"
+                    {...spotColorPropsFromDefinition(getVariableInfo("polygonSides"))}
+                >
+                    ten-sided
+                </InlineSpotColor>{" "}
+                shape gives{" "}
+                <InlineSpotColor
+                    id="spot-conclusion-triangles"
+                    varName="triangleCount"
+                    {...spotColorPropsFromDefinition(getVariableInfo("triangleCount"))}
+                >
+                    eight triangles
+                </InlineSpotColor>{" "}
+                and{" "}
+                <InlineSpotColor
+                    id="spot-conclusion-total"
+                    varName="angleSumTotal"
+                    {...spotColorPropsFromDefinition(getVariableInfo("angleSumTotal"))}
+                >
+                    1440 degrees
+                </InlineSpotColor>
+                , and you never picked up a protractor.
             </EditableParagraph>
         </Block>
     </StackLayout>,

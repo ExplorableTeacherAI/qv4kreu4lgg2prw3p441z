@@ -18,6 +18,8 @@ import {
     InlineFeedback,
     InlineLinkedHighlight,
     InlineScrubbleNumber,
+    InlineSpotColor,
+    InlineTrigger,
     InteractionHintSequence,
 } from "@/components/atoms";
 import { Figure, FigureSlider, FormulaBlock } from "@/components/molecules";
@@ -29,6 +31,7 @@ import {
     linkedHighlightPropsFromDefinition,
     numberPropsFromDefinition,
     scrubVarsFromDefinitions,
+    spotColorPropsFromDefinition,
 } from "../variables";
 
 // ── Shared view geometry ─────────────────────────────────────────────────────
@@ -54,7 +57,9 @@ const MAX_SUM = 1440;
 const INK = "#334155";
 const INK_STRUCTURE = "#64748B";
 const INK_QUIET = "#CBD5E1";
-const ACCENT = "#62D0AD";
+const ACCENT = "#62D0AD"; // the triangles, and the diagonals that cut them out
+const SIDES_COLOR = "#F8A0CD"; // the number of sides: marker, slider, scrubbable number
+const TOTAL_COLOR = "#F7B23B"; // the angle sum, amber in every section
 
 const EASE_150 = { transition: "opacity 150ms ease, stroke-width 150ms ease" } as const;
 
@@ -159,7 +164,7 @@ function PolygonFanDrawing() {
             </defs>
 
             <g fontSize="12" style={{ fontVariantNumeric: "tabular-nums", ...EASE_150 }}>
-                <text x="24" y="30" fill={INK} opacity={opacity("__structure")}>
+                <text x="24" y="30" fill={SIDES_COLOR} opacity={opacity("__structure")}>
                     {formatSides(count)}
                 </text>
                 <text
@@ -273,8 +278,9 @@ function PolygonFanDrawing() {
                     fill={INK}
                     style={{ fontVariantNumeric: "tabular-nums" }}
                 >
-                    {`${triangleCount(count)} × 180° = `}
-                    <tspan fill={ACCENT} fontWeight="600">{formatSum(angleSum(count))}</tspan>
+                    <tspan fill={ACCENT}>{`${triangleCount(count)}`}</tspan>
+                    {" × 180° = "}
+                    <tspan fill={TOTAL_COLOR} fontWeight="600">{formatSum(angleSum(count))}</tspan>
                 </text>
             </g>
         </svg>
@@ -327,7 +333,7 @@ function PolygonSumGraphDrawing() {
             </defs>
 
             <g fontSize="12" style={{ fontVariantNumeric: "tabular-nums", ...EASE_150 }}>
-                <text x="24" y="30" fill={INK} opacity={opacity("__structure")}>
+                <text x="24" y="30" fill={SIDES_COLOR} opacity={opacity("__structure")}>
                     {formatSides(count)}
                 </text>
             </g>
@@ -423,7 +429,7 @@ function PolygonSumGraphDrawing() {
                         y1={markerY}
                         x2={markerX}
                         y2={markerY}
-                        stroke={ACCENT}
+                        stroke={TOTAL_COLOR}
                         strokeWidth={weight("total", 2) + 6}
                         strokeLinecap="round"
                     />
@@ -433,14 +439,14 @@ function PolygonSumGraphDrawing() {
                     y1={markerY}
                     x2={markerX}
                     y2={markerY}
-                    stroke={ACCENT}
+                    stroke={TOTAL_COLOR}
                     strokeWidth={weight("total", 2)}
                     strokeDasharray="4 5"
                 />
                 <text
                     x={PLOT_LEFT - 10}
                     y={markerY + 4}
-                    fill={ACCENT}
+                    fill={TOTAL_COLOR}
                     fontSize="12"
                     textAnchor="end"
                     style={{ fontVariantNumeric: "tabular-nums" }}
@@ -451,7 +457,7 @@ function PolygonSumGraphDrawing() {
 
             {/* Draggable marker — the shared number of sides. */}
             <g transform={`translate(${markerX} ${markerY}) scale(${handleScale})`}>
-                <circle r="9" fill={ACCENT} filter="url(#polygon-marker-shadow)" />
+                <circle r="9" fill={SIDES_COLOR} filter="url(#polygon-marker-shadow)" />
             </g>
             <circle
                 cx={markerX}
@@ -580,6 +586,8 @@ export const polygonFanBlocks: ReactElement[] = [
                     varName="polygonHighlight"
                     highlightId="total"
                     {...linkedHighlightPropsFromDefinition(getVariableInfo("polygonHighlight"))}
+                    color="#F7B23B"
+                    bgColor="rgba(247, 178, 59, 0.22)"
                 >
                     running total
                 </InlineLinkedHighlight>
@@ -600,10 +608,35 @@ export const polygonFanBlocks: ReactElement[] = [
     <StackLayout key="layout-polygon-insight" maxWidth="xl">
         <Block id="polygon-insight" padding="sm">
             <EditableParagraph id="para-polygon-insight" blockId="polygon-insight">
-                Every new side adds exactly one triangle, and every triangle brings
-                another 180 degrees. Two of the sides are used up reaching the first
-                triangle, which is why the count is always two fewer than the number of
-                sides.
+                Every new side adds exactly{" "}
+                <InlineLinkedHighlight
+                    id="highlight-polygon-insight-triangle"
+                    varName="polygonHighlight"
+                    highlightId="triangles"
+                    {...linkedHighlightPropsFromDefinition(getVariableInfo("polygonHighlight"))}
+                >
+                    one triangle
+                </InlineLinkedHighlight>
+                , and every triangle brings another 180 degrees. Two of the sides are
+                used up reaching{" "}
+                <InlineTrigger
+                    id="trigger-polygon-first-triangle"
+                    varName="polygonSides"
+                    value={3}
+                    color="#F8A0CD"
+                    bgColor="rgba(248, 160, 205, 0.2)"
+                >
+                    the first triangle
+                </InlineTrigger>
+                , which is why the count is always two fewer than the{" "}
+                <InlineSpotColor
+                    id="spot-polygon-insight-sides"
+                    varName="polygonSides"
+                    {...spotColorPropsFromDefinition(getVariableInfo("polygonSides"))}
+                >
+                    number of sides
+                </InlineSpotColor>
+                .
             </EditableParagraph>
         </Block>
     </StackLayout>,
@@ -611,7 +644,8 @@ export const polygonFanBlocks: ReactElement[] = [
     <StackLayout key="layout-polygon-formula" maxWidth="xl">
         <Block id="polygon-formula" padding="lg">
             <FormulaBlock
-                latex="\text{angle sum} = (\scrub{polygonSides} - 2) \times 180^\circ"
+                latex="\text{\clr{angleSumTotal}{angle sum}} = \clr{triangleCount}{(}\scrub{polygonSides} \clr{triangleCount}{-} \clr{triangleCount}{2)} \times 180^\circ"
+                colorMap={{ angleSumTotal: "#F7B23B", triangleCount: "#62D0AD" }}
                 variables={scrubVarsFromDefinitions(["polygonSides"])}
             />
         </Block>

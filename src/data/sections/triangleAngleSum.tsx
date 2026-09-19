@@ -14,7 +14,11 @@ import {
     EditableParagraph,
     InlineClozeInput,
     InlineFeedback,
+    InlineFormula,
     InlineLinkedHighlight,
+    InlineSpotColor,
+    InlineTooltip,
+    InlineTrigger,
     InteractionHintSequence,
 } from "@/components/atoms";
 import { Figure } from "@/components/molecules";
@@ -24,6 +28,7 @@ import {
     clozePropsFromDefinition,
     getVariableInfo,
     linkedHighlightPropsFromDefinition,
+    spotColorPropsFromDefinition,
 } from "../variables";
 
 // ── View constants ───────────────────────────────────────────────────────────
@@ -54,6 +59,7 @@ const INK_QUIET = "#CBD5E1";
 const APEX_COLOR = "#62D0AD"; // the draggable corner
 const LEFT_COLOR = "#8E90F5";
 const RIGHT_COLOR = "#AC8BF9";
+const TOTAL_COLOR = "#F7B23B"; // the half-turn the three angles fill: 180 degrees
 
 const EASE_150 = { transition: "opacity 150ms ease, stroke-width 150ms ease" } as const;
 
@@ -233,7 +239,8 @@ function TriangleAngleSumDrawing() {
                 <tspan fill={APEX_COLOR}>{formatAngle(shownApex)}</tspan>
                 <tspan fill={INK}> + </tspan>
                 <tspan fill={RIGHT_COLOR}>{formatAngle(shownRight)}</tspan>
-                <tspan fill={INK} fontWeight="600">{`  =  ${formatAngle(180)}`}</tspan>
+                <tspan fill={INK}>{"  =  "}</tspan>
+                <tspan fill={TOTAL_COLOR} fontWeight="600">{formatAngle(180)}</tspan>
             </text>
 
             {/* Ghost of the starting triangle — the before-state reference. */}
@@ -317,7 +324,7 @@ function TriangleAngleSumDrawing() {
                         y1={FAN_CENTRE.y}
                         x2={FAN_LINE_RIGHT}
                         y2={FAN_CENTRE.y}
-                        stroke={INK_STRUCTURE}
+                        stroke={TOTAL_COLOR}
                         strokeWidth={weight("straight", 2) + 6}
                         strokeLinecap="round"
                     />
@@ -334,8 +341,8 @@ function TriangleAngleSumDrawing() {
                     y1={FAN_CENTRE.y}
                     x2={FAN_LINE_RIGHT}
                     y2={FAN_CENTRE.y}
-                    stroke={INK_STRUCTURE}
-                    strokeWidth={weight("straight", 2)}
+                    stroke={TOTAL_COLOR}
+                    strokeWidth={weight("straight", 2.5)}
                     strokeLinecap="round"
                 />
                 <text
@@ -454,8 +461,15 @@ export const triangleAngleSumBlocks: ReactElement[] = [
     <StackLayout key="layout-triangle-setup" maxWidth="xl">
         <Block id="triangle-setup" padding="sm">
             <EditableParagraph id="para-triangle-setup" blockId="triangle-setup">
-                Start with the simplest straight-sided shape there is. Drag the teal
-                corner anywhere you like, and watch the{" "}
+                Start with the simplest straight-sided shape there is. Drag the{" "}
+                <InlineSpotColor
+                    id="spot-triangle-apex"
+                    varName="triangleApexX"
+                    {...spotColorPropsFromDefinition(getVariableInfo("triangleApexX"))}
+                >
+                    teal corner
+                </InlineSpotColor>{" "}
+                anywhere you like, and watch the{" "}
                 <InlineLinkedHighlight
                     varName="triangleHighlight"
                     highlightId="angles"
@@ -468,10 +482,32 @@ export const triangleAngleSumBlocks: ReactElement[] = [
                     varName="triangleHighlight"
                     highlightId="straight"
                     {...linkedHighlightPropsFromDefinition(getVariableInfo("triangleHighlight"))}
+                    color="#F7B23B"
+                    bgColor="rgba(247, 178, 59, 0.22)"
                 >
                     straight line
                 </InlineLinkedHighlight>{" "}
-                below. Stretch it tall, squash it flat, push it lopsided.
+                below. Stretch it tall,{" "}
+                <InlineTrigger
+                    id="trigger-triangle-flat"
+                    varName="triangleApexY"
+                    value={206}
+                    color="#62D0AD"
+                    bgColor="rgba(98, 208, 173, 0.18)"
+                >
+                    squash it flat
+                </InlineTrigger>
+                ,{" "}
+                <InlineTrigger
+                    id="trigger-triangle-lopsided"
+                    varName="triangleApexX"
+                    value={430}
+                    color="#62D0AD"
+                    bgColor="rgba(98, 208, 173, 0.18)"
+                >
+                    push it lopsided
+                </InlineTrigger>
+                .
             </EditableParagraph>
         </Block>
     </StackLayout>,
@@ -485,8 +521,21 @@ export const triangleAngleSumBlocks: ReactElement[] = [
     <StackLayout key="layout-triangle-insight" maxWidth="xl">
         <Block id="triangle-insight" padding="sm">
             <EditableParagraph id="para-triangle-insight" blockId="triangle-insight">
-                Half a turn is 180 degrees, so the three angles of any triangle add to
-                180. That single fact is the engine for everything else on this page.
+                <InlineTooltip
+                    id="tooltip-triangle-half-turn"
+                    tooltip="Turning until you face the opposite way. A full turn is 360 degrees, so half a turn is 180 degrees, which is exactly a straight line."
+                    color="#F7B23B"
+                    bgColor="rgba(247, 178, 59, 0.22)"
+                >
+                    Half a turn
+                </InlineTooltip>{" "}
+                is 180 degrees, so the three angles of any triangle add to 180:{" "}
+                <InlineFormula
+                    id="formula-triangle-insight-sum"
+                    latex="\clr{left}{a} + \clr{apex}{b} + \clr{right}{c} = \clr{angleSumTotal}{180^\circ}"
+                    colorMap={{ left: "#8E90F5", apex: "#62D0AD", right: "#AC8BF9", angleSumTotal: "#F7B23B" }}
+                />
+                . That single fact is the engine for everything else on this page.
                 Once you know two of the angles, the third has nowhere to hide.
             </EditableParagraph>
         </Block>
@@ -495,8 +544,19 @@ export const triangleAngleSumBlocks: ReactElement[] = [
     <StackLayout key="layout-triangle-question" maxWidth="xl">
         <Block id="triangle-question" padding="sm">
             <EditableParagraph id="para-triangle-question" blockId="triangle-question">
-                A triangle in a bike frame has two angles measuring 47° and 68°, so its
-                third angle must be{" "}
+                A triangle in a bike frame has two angles measuring{" "}
+                <InlineFormula
+                    id="formula-triangle-question-first"
+                    latex="\clr{left}{47^\circ}"
+                    colorMap={{ left: "#8E90F5" }}
+                />{" "}
+                and{" "}
+                <InlineFormula
+                    id="formula-triangle-question-second"
+                    latex="\clr{right}{68^\circ}"
+                    colorMap={{ right: "#AC8BF9" }}
+                />
+                , so its third angle must be{" "}
                 <InlineFeedback
                     varName="answerTriangleMissingAngle"
                     correctValue={["65", "65°"]}

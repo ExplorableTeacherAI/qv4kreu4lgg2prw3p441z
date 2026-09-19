@@ -14,7 +14,9 @@ import {
     EditableParagraph,
     InlineClozeInput,
     InlineFeedback,
+    InlineFormula,
     InlineLinkedHighlight,
+    InlineTooltip,
     InteractionHintSequence,
 } from "@/components/atoms";
 import { Figure } from "@/components/molecules";
@@ -44,6 +46,7 @@ const INK_QUIET = "#CBD5E1";
 
 const FIRST_TRIANGLE = "#62D0AD";
 const SECOND_TRIANGLE = "#AC8BF9";
+const TOTAL_COLOR = "#F7B23B"; // the angle sum, amber in every section
 
 const EASE_150 = { transition: "opacity 150ms ease, stroke-width 150ms ease" } as const;
 
@@ -247,7 +250,8 @@ function QuadrilateralSplitDrawing() {
                 opacity={opacity("corners")}
             >
                 {`${formatAngle(shown[0])} + ${formatAngle(shown[1])} + ${formatAngle(shown[2])} + ${formatAngle(shown[3])}`}
-                <tspan fontWeight="600">{`  =  360°`}</tspan>
+                {"  =  "}
+                <tspan fill={TOTAL_COLOR} fontWeight="600">360°</tspan>
             </text>
 
             {/* Ghost of the starting shape — the before-state reference. */}
@@ -473,6 +477,8 @@ export const quadrilateralSplitBlocks: ReactElement[] = [
                     varName="quadHighlight"
                     highlightId="corners"
                     {...linkedHighlightPropsFromDefinition(getVariableInfo("quadHighlight"))}
+                    color="#64748B"
+                    bgColor="rgba(100, 116, 139, 0.16)"
                 >
                     four angles
                 </InlineLinkedHighlight>{" "}
@@ -490,8 +496,22 @@ export const quadrilateralSplitBlocks: ReactElement[] = [
     <StackLayout key="layout-quad-insight" maxWidth="xl">
         <Block id="quad-insight" padding="sm">
             <EditableParagraph id="para-quad-insight" blockId="quad-insight">
-                Two triangles, 180 degrees each, so the four angles add to 360. The
-                diagonal did not add anything to the shape. It only revealed triangles
+                Two triangles, 180 degrees each, so the four angles add to{" "}
+                <InlineFormula
+                    id="formula-quad-insight-sum"
+                    latex="\clr{first}{180^\circ} + \clr{second}{180^\circ} = \clr{angleSumTotal}{360^\circ}"
+                    colorMap={{ first: "#62D0AD", second: "#AC8BF9", angleSumTotal: "#F7B23B" }}
+                />
+                . The{" "}
+                <InlineTooltip
+                    id="tooltip-quad-diagonal"
+                    tooltip="A diagonal is a straight line joining two corners that are not next to each other."
+                    color="#62D0AD"
+                    bgColor="rgba(98, 208, 173, 0.18)"
+                >
+                    diagonal
+                </InlineTooltip>{" "}
+                did not add anything to the shape. It only revealed triangles
                 that were hiding there all along.
             </EditableParagraph>
         </Block>
